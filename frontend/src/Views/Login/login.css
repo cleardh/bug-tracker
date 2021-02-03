@@ -3,8 +3,7 @@
     height: 105vh;
     background: url('../../Images/imageBG.jpg');
     background-size: cover;
-    margin-left: -20.6vw;
-    margin-top: -27px;
+    grid-column: 1/2;
     background-color: rgba(0, 0, 0, 0.356);
     background-blend-mode: multiply;
     background-attachment: fixed;
