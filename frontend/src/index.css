@@ -15,9 +15,18 @@ button {
     font: normal bold 18px 'Open Sans',sans-serif;
     text-align: center;
     margin-bottom: 10px;
+    cursor: pointer;
 }
 
 button:hover {
     transition: all 0.3s;
     background-color: #9c3829;
+}
+
+.page-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    grid-column: 2;
 }
