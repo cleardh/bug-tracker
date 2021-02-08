@@ -15,6 +15,7 @@ export default (props) => {
 
     return (
         <div className='bug-create'>
+            {props.title === 'Edit bug' && <button className='close-btn' onClick={props.close}>Close</button>}
             <h1>{props.title}</h1>
             <form>
                 <label>Name: </label>
