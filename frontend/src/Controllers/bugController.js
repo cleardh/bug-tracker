@@ -12,7 +12,8 @@ export const retrieveBugs = () => {
         priority: 1,
         assigned: 'Dongha Kang',
         creator: 'test',
-        time: '18:20'
+        time: '18:20',
+        completed: false
     }));
     
     data.push(new bugModel({
@@ -24,7 +25,8 @@ export const retrieveBugs = () => {
         priority: 3,
         assigned: 'Dongha Kang',
         creator: 'test',
-        time: '18:34'
+        time: '18:34',
+        completed: false
     }));
 
     let sorted = data.sort((a, b) => { return a.priority - b.priority; })

@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import BugModel from '../../../Models/BugModel';
+import { createBugs } from '../../../Controllers/Redux/bugSlice';
 
 import './bugForm.css';
 
 export default (props) => {
+    const dispatch = useDispatch();
     const [bugObject, setBugObject] = useState(new BugModel(props.bug));
 
     const inputChanged = (e) => {
@@ -13,11 +16,24 @@ export default (props) => {
         })
     }
 
+    const submitForm = (e) => {
+        e.preventDefault();
+        dispatch(createBugs(bugObject));
+        setBugObject({
+            name: '',
+            details: '',
+            steps: '',
+            version: '',
+            assigned: 'Dongha Kang',
+            priority: 1
+        });
+    }
+
     return (
         <div className='bug-create'>
             {props.title === 'Edit bug' && <button className='close-btn' onClick={props.close}>Close</button>}
             <h1>{props.title}</h1>
-            <form>
+            <form onSubmit={submitForm}>
                 <label>Name: </label>
                 <input type='text' name='name' placeholder='Bug name' required onChange={inputChanged} value={bugObject.name} />
                 <label>Details: </label>
@@ -33,6 +49,7 @@ export default (props) => {
                 <label>Assigned: </label>
                 <select name='assigned' required onChange={inputChanged} value={bugObject.assigned}>
                     <option value='Dongha Kang'>Dongha Kang</option>
+                    <option value='Test User'>Test User</option>
                 </select>
                 <label>Version: </label>
                 <input type='text' name='version' placeholder='Application version' required onChange={inputChanged} value={bugObject.version} />
