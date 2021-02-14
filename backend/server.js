@@ -20,5 +20,6 @@ app.use(cookieParser());
 app.use(cors());
 
 app.use('/auth', require('./Controllers/Routes/auth'));
+app.use('/bugs', require('./Controllers/Routes/bugs'));
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
