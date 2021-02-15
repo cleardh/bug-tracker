@@ -1,5 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios';
+
+export const signIn = createAsyncThunk(
+    'auth/signIn',
+    async (loginData) => {
+        const res = await axios.post('/auth', loginData, { 'Content-Type': 'application/json' });
+        return res.data
+    }
+);
 
 const slice = createSlice({
     name: 'auth',
@@ -8,13 +16,6 @@ const slice = createSlice({
         loggedIn: false
     },
     reducers: {
-        signIn: (state, action) => {
-            axios.post('/auth', action.payload, { 'Content-Type': 'application/json' }).then(res => {
-                console.log(res);
-            })
-            state.loggedIn = true;
-            state.admin = true;
-        },
         signOut: (state) => {
             state.loggedIn = false;
             state.admin = false;
@@ -22,9 +23,15 @@ const slice = createSlice({
         createUser: (state, action) => {
 
         }
+    },
+    extraReducers: {
+        [signIn.fulfilled]: (state, action) => {
+            console.log(action);
+            state.loggedIn = action.payload;
+        }
     }
 })
 
 export default slice.reducer;
 
-export const { signIn, signOut, createUser } = slice.actions
+export const { signOut, createUser } = slice.actions;

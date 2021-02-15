@@ -7,7 +7,7 @@ export default () => {
     const dispatch = useDispatch();
 
     const [formInput, setFormInput] = useState({
-        name: '',
+        username: '',
         password: ''
     })
 
@@ -31,7 +31,7 @@ export default () => {
         <div className='loginBG'>
             <form className='login-panel'>
                 <h1>Bug Tracker</h1>
-                <input type='text' name='name' placeholder='Name' onChange={inputChanged} value={formInput.name} />
+                <input type='text' name='username' placeholder='Username' onChange={inputChanged} value={formInput.username} />
                 <input type='password' name='password' placeholder='Password' onChange={inputChanged} value={formInput.password} />
                 <button className='login-button' type='submit' onClick={submit}>Login</button>
                 <button className='login-button' type='button' onClick={signup}>Signup</button>
