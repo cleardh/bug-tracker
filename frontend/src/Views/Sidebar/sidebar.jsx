@@ -7,7 +7,7 @@ import './sidebar.css';
 export default () => {
     const dispatch = useDispatch();
 
-    const signOut = () => {
+    const logOut = () => {
         dispatch(signOut());
     }
 
@@ -21,7 +21,7 @@ export default () => {
                 <li><Link to='/viewbugs' className='nav-link'>View Bugs</Link></li>
                 {auth.admin && <li><Link to='/createbugs' className='nav-link'>Create Bug</Link></li>}
             </ul>
-            <button className='nav-link logout' onClick={signOut}>Logout</button>
+            <button className='nav-link logout' onClick={logOut}>Logout</button>
         </div>
     )
 }

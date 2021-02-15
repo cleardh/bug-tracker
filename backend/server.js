@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3500;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(cors());
 
 app.use('/auth', require('./Controllers/Routes/auth'));

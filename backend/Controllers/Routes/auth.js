@@ -16,12 +16,28 @@ route.put('/user', (req, res) => {
     }).catch(err => res.status(400).send(err));
 });
 
+// Signin
 route.post('/', (req, res) => {
     UserModel.findOne({ username: req.body.username, password: req.body.password }).then(user => {
         if (!user) return res.status(400).send('Incorrect credentials');
-        res.cookie('user', user);
+        res.cookie('user', user, {
+            maxAge: 60 * 60 * 1000, // 1 hour
+            httpOnly: true,
+            signed: true
+        });
         res.send(true);
-    }).catch(err => res.status(400).send(err));
+    }).catch(err => console.log(err));
+});
+
+// Signout
+route.post('/logout', (req, res) => {
+    if (req.signedCookies.user) res.clearCookie('user').send(false);
+});
+
+// Check login state
+route.get('/loggedin', (req, res) => {
+    if (!req.signedCookies.user) return res.status(400).send('Logged out');
+    res.send(true);
 });
 
 route.get('/', (req, res) => {
