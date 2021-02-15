@@ -23,13 +23,18 @@ export default () => {
         dispatch(signIn(formInput));
     }
 
+    const signup = () => {
+        console.log('signing up...');
+    }
+
     return (
         <div className='loginBG'>
             <form className='login-panel'>
-                <h1>Login:</h1>
+                <h1>Bug Tracker</h1>
                 <input type='text' name='name' placeholder='Name' onChange={inputChanged} value={formInput.name} />
                 <input type='password' name='password' placeholder='Password' onChange={inputChanged} value={formInput.password} />
-                <button type='submit' onClick={submit}>Login</button>
+                <button className='login-button' type='submit' onClick={submit}>Login</button>
+                <button className='login-button' type='button' onClick={signup}>Signup</button>
             </form>
         </div>
     )
