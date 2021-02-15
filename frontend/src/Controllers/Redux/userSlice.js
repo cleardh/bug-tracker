@@ -5,9 +5,9 @@ const slice = createSlice({
     initialState: [{}],
     reducers: {
         getUsers: (state) => {
-            state.push({ name: 'Dongha Kang' });
-            state.push({ name: 'test' });
-        }
+            // state.push({ name: 'Dongha Kang' });
+            // state.push({ name: 'test' });
+        },
     }
 });
 

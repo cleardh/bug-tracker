@@ -9,14 +9,15 @@ route.post('/user', (req, res) => {
 });
 
 route.put('/user', (req, res) => {
-    const { _id, name, password, role } = req.body;
-    UserModel.findByIdAndUpdate(_id, { name, password, role }, { new: true, useFindAndModify: false }).then(user => {
+    const { _id, username, password, role } = req.body;
+    UserModel.findByIdAndUpdate(_id, { username, password, role }, { new: true, useFindAndModify: false }).then(user => {
         if (!user) return res.status(400).send('No user');
         res.send('User updated');
     }).catch(err => res.status(400).send(err));
 });
 
 route.post('/', (req, res) => {
+    console.log('reached...');
     UserModel.findOne(req.body).then(user => {
         if (!user) return res.status(400).send('Incorrect credentials');
         res.cookie('user', user);
