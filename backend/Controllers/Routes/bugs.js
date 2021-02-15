@@ -3,7 +3,7 @@ const BugModel = require('../../Models/BugModel');
 
 // Create new bug
 route.post('/', (req, res) => {
-    BugModel.create(req.body).then(bug => {
+    BugModel.create({ ...req.body, time: new Date().toString().slice(4, 24) }).then(bug => {
         if (!bug) return res.status(400).send('There has been an error');
         res.send(bug);
     }).catch(err => res.status(400).send(err));
@@ -27,10 +27,9 @@ route.get('/:id', (req, res) => {
 
 // Update bug by id
 route.put('/', (req, res) => {
-    const { _id, name, details, steps, version, priority, assigned, creator, completed } = req.body;
-    BugModel.findByIdAndUpdate(_id, { name, details, steps, version, priority, assigned, creator, completed, time: new Date().toISOString().slice(11, 16) })
+    BugModel.findByIdAndUpdate(req.body._id, { ...req.body, time: new Date().toString().slice(4, 24) }, { new: true, useFindAndModify: false })
     .then(bug => {
-        if (!bug) return res.status(400).send('No bug found')
+        if (!bug) return res.status(400).send('No bug found');
         res.send('Bug updated');
     })
     .catch(err => res.status(400).send(err));

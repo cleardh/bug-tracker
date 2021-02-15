@@ -8,9 +8,10 @@ const app = express();
 mongoose.connect(process.env.DB_URL, { 
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: true
+    useFindAndModify: true,
 }, (err) => {
-    if (!err) return console.log('Connected to DB');
+    if (err) throw err;
+    return console.log('Connected to DB');
 });
 
 const PORT = process.env.PORT || 3500;

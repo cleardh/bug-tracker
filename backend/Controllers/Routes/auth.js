@@ -10,7 +10,7 @@ route.post('/user', (req, res) => {
 
 route.put('/user', (req, res) => {
     const { _id, name, password, role } = req.body;
-    UserModel.findByIdAndUpdate(_id, { name, password, role }).then(user => {
+    UserModel.findByIdAndUpdate(_id, { name, password, role }, { new: true, useFindAndModify: false }).then(user => {
         if (!user) return res.status(400).send('No user');
         res.send('User updated');
     }).catch(err => res.status(400).send(err));
