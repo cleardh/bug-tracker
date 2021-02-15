@@ -9,6 +9,22 @@ export const signIn = createAsyncThunk(
     }
 );
 
+export const persistAuthState = createAsyncThunk(
+    'auth/persistAuthState',
+    async () => {
+        const res = await axios.get('/auth/loggedin');
+        return res.data;
+    }
+);
+
+export const signOut = createAsyncThunk(
+    'auth/signout',
+    async () => {
+        const res = await axios.post('/auth/logout');
+        return res.data;
+    }
+);
+
 const slice = createSlice({
     name: 'auth',
     initialState: {
@@ -16,17 +32,18 @@ const slice = createSlice({
         loggedIn: false
     },
     reducers: {
-        signOut: (state) => {
-            state.loggedIn = false;
-            state.admin = false;
-        },
         createUser: (state, action) => {
 
         }
     },
     extraReducers: {
         [signIn.fulfilled]: (state, action) => {
-            console.log(action);
+            state.loggedIn = action.payload;
+        },
+        [signOut.fulfilled]: (state, action) => {
+            state.loggedIn = action.payload;
+        },
+        [persistAuthState.fulfilled]: (state, action) => {
             state.loggedIn = action.payload;
         }
     }
@@ -34,4 +51,4 @@ const slice = createSlice({
 
 export default slice.reducer;
 
-export const { signOut, createUser } = slice.actions;
+export const { createUser } = slice.actions;
