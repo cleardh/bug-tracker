@@ -16,6 +16,7 @@ mongoose.connect(process.env.DB_URL, {
 
 const PORT = process.env.PORT || 3500;
 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors());

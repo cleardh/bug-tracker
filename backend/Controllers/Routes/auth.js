@@ -17,8 +17,7 @@ route.put('/user', (req, res) => {
 });
 
 route.post('/', (req, res) => {
-    console.log('reached...');
-    UserModel.findOne(req.body).then(user => {
+    UserModel.findOne({ username: req.body.username, password: req.body.password }).then(user => {
         if (!user) return res.status(400).send('Incorrect credentials');
         res.cookie('user', user);
         res.send(true);
@@ -29,6 +28,13 @@ route.get('/', (req, res) => {
     UserModel.find().then(users => {
         if (!users) return res.status(400).send('No users');
         res.send(users);
+    }).catch(err => res.status(400).send(err));
+});
+
+route.delete('/:id', (req, res) => {
+    UserModel.findByIdAndDelete(req.params.id).then(user => {
+        if (!user) return res.status(400).send('No user');
+        res.send('User deleted');
     }).catch(err => res.status(400).send(err));
 });
 
