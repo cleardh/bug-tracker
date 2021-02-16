@@ -1,10 +1,19 @@
+require('dotenv').config();
 const route = require('express').Router();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const UserModel = require('../../Models/UserModel');
+const authenticateUser = require('../Middlewares/authToken');
 
-route.post('/user', (req, res) => {
-    UserModel.create(req.body).then((user) => {
+route.post('/user', async (req, res) => {
+    const salt = await bcrypt.genSalt(10);
+    const password = await bcrypt.hash(req.body.password, salt);
+    UserModel.create({ ...req.body, password }).then((user) => {
         if (!user) return res.status(400).send('There has been an error');
-        res.send(user);
+        const token = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, {
+            expiresIn: 86400
+        });
+        res.send({ user, token });
     }).catch(err => res.status(400).send(err));
 });
 
@@ -47,7 +56,7 @@ route.get('/', (req, res) => {
     }).catch(err => res.status(400).send(err));
 });
 
-route.delete('/:id', (req, res) => {
+route.delete('/:id', authenticateUser, (req, res) => {
     UserModel.findByIdAndDelete(req.params.id).then(user => {
         if (!user) return res.status(400).send('No user');
         res.send('User deleted');
