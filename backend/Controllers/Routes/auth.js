@@ -3,21 +3,38 @@ const route = require('express').Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const UserModel = require('../../Models/UserModel');
-const authenticateUser = require('../Middlewares/authToken');
+const verifyToken = require('../Middlewares/verifyToken');
 
-route.post('/user', async (req, res) => {
-    const salt = await bcrypt.genSalt(10);
-    const password = await bcrypt.hash(req.body.password, salt);
-    UserModel.create({ ...req.body, password }).then((user) => {
-        if (!user) return res.status(400).send('There has been an error');
-        const token = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, {
-            expiresIn: 86400
-        });
-        res.send({ user, token });
+function generateToken(res, user) {
+    const token = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: 86400
+    });
+    res.cookie('token', token, {
+        expires: new Date(Date.now() + 86400),
+        signed: true,
+        httpOnly: true,
+        // secure: true
+    });
+}
+
+route.post('/user', (req, res) => {
+    if (!req.body.username || !req.body.password) return res.status(400).send('Invalid credential');
+    UserModel.findOne({ username: req.body.username }).then(async user => {
+        if (user) {
+            return res.status(400).send('Username already exists');
+        } else {
+            const salt = await bcrypt.genSalt(10);
+            const password = await bcrypt.hash(req.body.password, salt);
+            UserModel.create({ ...req.body, password }).then(async newUser => {
+                if (!newUser) return res.status(400).send('There has been an error');
+                await generateToken(res, newUser);
+                res.send(newUser);
+            }).catch(err => res.status(400).send(err));
+        }
     }).catch(err => res.status(400).send(err));
 });
 
-route.put('/user', (req, res) => {
+route.put('/user', verifyToken, (req, res) => {
     const { _id, username, password, role } = req.body;
     UserModel.findByIdAndUpdate(_id, { username, password, role }, { new: true, useFindAndModify: false }).then(user => {
         if (!user) return res.status(400).send('No user');
@@ -27,36 +44,35 @@ route.put('/user', (req, res) => {
 
 // Signin
 route.post('/', (req, res) => {
-    UserModel.findOne({ username: req.body.username, password: req.body.password }).then(user => {
-        if (!user) return res.status(400).send('Incorrect credentials');
-        res.cookie('user', user, {
-            maxAge: 60 * 60 * 1000, // 1 hour
-            httpOnly: true,
-            signed: true
-        });
+    const { username, password } = req.body;
+    UserModel.findOne({ username }).then(async user => {
+        if (!user) return res.status(400).send('User not found');
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(400).send('Incorrect credentials');
+        await generateToken(res, user);
         res.send(true);
     }).catch(err => console.log(err));
 });
 
 // Signout
 route.post('/logout', (req, res) => {
-    if (req.signedCookies.user) res.clearCookie('user').send(false);
+    if (req.signedCookies.token) res.clearCookie('user').send(false);
 });
 
 // Check login state
 route.get('/loggedin', (req, res) => {
-    if (!req.signedCookies.user) return res.status(400).send('Logged out');
+    if (!req.signedCookies.token) return res.status(400).send('Logged out');
     res.send(true);
 });
 
-route.get('/', (req, res) => {
+route.get('/', verifyToken, (req, res) => {
     UserModel.find().then(users => {
         if (!users) return res.status(400).send('No users');
         res.send(users);
     }).catch(err => res.status(400).send(err));
 });
 
-route.delete('/:id', authenticateUser, (req, res) => {
+route.delete('/:id', verifyToken, (req, res) => {
     UserModel.findByIdAndDelete(req.params.id).then(user => {
         if (!user) return res.status(400).send('No user');
         res.send('User deleted');
