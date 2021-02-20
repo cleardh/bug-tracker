@@ -1,10 +1,22 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios';
 
+export const createUser = createAsyncThunk(
+    'auth/createUser',
+    async ({ username, password }) => {
+        const res = await axios.post('/auth/user', { username, password }, {
+            'Content-Type': 'application/json'
+        });
+        return res.data;
+    }
+)
+
 export const signIn = createAsyncThunk(
     'auth/signIn',
     async (loginData) => {
-        const res = await axios.post('/auth', loginData, { 'Content-Type': 'application/json' });
+        const res = await axios.post('/auth', loginData, {
+            'Content-Type': 'application/json'
+        });
         return res.data
     }
 );
@@ -31,12 +43,17 @@ const slice = createSlice({
         admin: false,
         loggedIn: false
     },
-    reducers: {
-        createUser: (state, action) => {
-
-        }
-    },
+    reducers: {},
     extraReducers: {
+        [createUser.fulfilled]: (state, action) => {
+            const { username, password, role } = action.payload;
+            if (username && password) {
+                state.loggedIn = true;
+            }
+            if (role) {
+                state.admin = true;
+            }
+        },
         [signIn.fulfilled]: (state, action) => {
             state.loggedIn = action.payload;
         },
@@ -50,5 +67,3 @@ const slice = createSlice({
 })
 
 export default slice.reducer;
-
-export const { createUser } = slice.actions;
