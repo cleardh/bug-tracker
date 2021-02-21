@@ -10,7 +10,8 @@ function generateToken(res, user) {
         expiresIn: 86400
     });
     res.cookie('token', token, {
-        expires: new Date(Date.now() + 86400),
+        // expires: new Date(Date.now() + 86400),
+        maxAge: 1000 * 60 * 60 * 24, // 1d
         signed: true,
         httpOnly: true,
         // secure: true
@@ -61,7 +62,7 @@ route.post('/logout', (req, res) => {
 
 // Check login state
 route.get('/loggedin', (req, res) => {
-    if (!req.signedCookies.token) return res.status(400).send('Logged out');
+    if (!req.signedCookies.token) return res.send(false);
     res.send(true);
 });
 
