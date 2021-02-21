@@ -9,12 +9,16 @@ import { persistAuthState } from './Controllers/Redux/authSlice';
 import DashboardPage from './Views/Pages/Dashboard/dashboard';
 import ViewBugPage from './Views/Pages/viewBugs';
 import CreateBug from './Views/Components/BugCreateEdit/bugForm';
+import { getUsers } from './Controllers/Redux/userSlice';
 
 function App() {
   const dispatch = useDispatch();
   const { auth } = useSelector(state => state);
   useEffect(() => {
     dispatch(persistAuthState());
+  }, []);
+  useEffect(() => {
+    dispatch(getUsers());
   }, []);
 
   return (
