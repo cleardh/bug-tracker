@@ -57,7 +57,7 @@ route.post('/', (req, res) => {
 
 // Signout
 route.post('/logout', (req, res) => {
-    if (req.signedCookies.token) res.clearCookie('user').send(false);
+    if (req.signedCookies.token) res.clearCookie('token').send(false);
 });
 
 // Check login state
