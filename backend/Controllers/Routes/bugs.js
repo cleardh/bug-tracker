@@ -1,10 +1,13 @@
 const route = require('express').Router();
 const BugModel = require('../../Models/BugModel');
+const UserModel = require('../../Models/UserModel');
 const verifyToken = require('../Middlewares/verifyToken');
 
 // Create new bug
-route.post('/', verifyToken, (req, res) => {
-    BugModel.create({ ...req.body, time: new Date().toString().slice(4, 24) }).then(bug => {
+route.post('/', verifyToken, async (req, res) => {
+    delete req.user._doc.password;
+    const creator = req.user._doc;
+    BugModel.create({ ...req.body, time: new Date().toString().slice(4, 24), creator, completed: false }).then(bug => {
         if (!bug) return res.status(400).send('There has been an error');
         res.send(bug);
     }).catch(err => res.status(400).send(err));

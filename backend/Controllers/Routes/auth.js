@@ -6,7 +6,7 @@ const UserModel = require('../../Models/UserModel');
 const verifyToken = require('../Middlewares/verifyToken');
 
 function generateToken(res, user) {
-    const token = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, {
+    const token = jwt.sign({ ...user }, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: 86400
     });
     res.cookie('token', token, {
@@ -18,14 +18,19 @@ function generateToken(res, user) {
     });
 }
 
+async function hashPassword(password) {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    return hashedPassword;
+}
+
 route.post('/user', (req, res) => {
     if (!req.body.username || !req.body.password) return res.status(400).send('Username and password are required');
     UserModel.findOne({ username: req.body.username }).then(async user => {
         if (user) {
             return res.status(400).send('Username already exists');
         } else {
-            const salt = await bcrypt.genSalt(10);
-            const password = await bcrypt.hash(req.body.password, salt);
+            const password = await hashPassword(req.body.password);
             UserModel.create({ ...req.body, password }).then(async newUser => {
                 if (!newUser) return res.status(400).send('There has been an error');
                 await generateToken(res, newUser);
@@ -35,8 +40,9 @@ route.post('/user', (req, res) => {
     }).catch(err => res.status(400).send(err));
 });
 
-route.put('/user', verifyToken, (req, res) => {
-    const { _id, username, password, role } = req.body;
+route.put('/user', verifyToken, async (req, res) => {
+    const { _id, username, role } = req.body;
+    const password = await hashPassword(req.body.password);
     UserModel.findByIdAndUpdate(_id, { username, password, role }, { new: true, useFindAndModify: false }).then(user => {
         if (!user) return res.status(400).send('No user');
         res.send('User updated');
@@ -51,7 +57,7 @@ route.post('/', (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).send('Incorrect credentials');
         await generateToken(res, user);
-        res.send(true);
+        res.send(user);
     }).catch(err => console.log(err));
 });
 
@@ -61,9 +67,10 @@ route.post('/logout', (req, res) => {
 });
 
 // Check login state
-route.get('/loggedin', (req, res) => {
+route.get('/loggedin', verifyToken, (req, res) => {
     if (!req.signedCookies.token) return res.send(false);
-    res.send(true);
+    delete req.user._doc.password;
+    res.send(req.user._doc);
 });
 
 route.get('/', verifyToken, (req, res) => {

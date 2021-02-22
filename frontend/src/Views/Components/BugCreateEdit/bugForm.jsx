@@ -41,7 +41,7 @@ export default (props) => {
                 <label>Steps: </label>
                 <textarea name='steps' placeholder='Steps to recreate the bug' required onChange={inputChanged} value={bugObject.steps}></textarea>
                 <label>Priority: </label>
-                <select name='priority' required onChange={inputChanged} value={bugObject.priority}>
+                <select name='priority' required onChange={inputChanged} value={bugObject.priority || 1}>
                     <option value='1'>High</option>
                     <option value='2'>Medium</option>
                     <option value='3'>Low</option>
