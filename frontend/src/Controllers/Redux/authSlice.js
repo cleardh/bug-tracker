@@ -55,13 +55,15 @@ const slice = createSlice({
             }
         },
         [signIn.fulfilled]: (state, action) => {
-            state.loggedIn = action.payload;
+            state.loggedIn = action.payload !== null;
+            state.admin = action.payload.role === 'admin';
         },
         [signOut.fulfilled]: (state, action) => {
             state.loggedIn = action.payload;
         },
         [persistAuthState.fulfilled]: (state, action) => {
-            state.loggedIn = action.payload;
+            state.loggedIn = action.payload !== null;
+            state.admin = action.payload.role === 'admin'
         }
     }
 })

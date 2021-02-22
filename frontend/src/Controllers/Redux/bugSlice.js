@@ -10,26 +10,22 @@ export const getBugs = createAsyncThunk(
     }
 )
 
+export const createBugs = createAsyncThunk(
+    'bugs/createBugs',
+    async (newBug) => {
+        const res = await axios.post('/bugs', newBug, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return res.data;
+    }
+);
+
 const slice = createSlice({
     name: 'bugs',
     initialState: [],
     reducers: {
-        createBugs: (state, action) => {
-            // state.push(action.payload);
-            const { name, details, steps, version, assigned, priority } = action.payload;
-            const newBug = {
-                _id: Math.floor(Math.random() * 100000000),
-                name,
-                details,
-                steps,
-                version,
-                priority,
-                assigned,
-                creator: 'test',
-                time: new Date().toISOString().slice(11, 16),
-            }
-            return [ ...state, newBug];
-        },
         deleteBugs: (state, action) => {
             return state.filter(bug => bug._id !== action.payload);
         },
@@ -44,10 +40,13 @@ const slice = createSlice({
         [getBugs.fulfilled]: (state, action) => {
             const sorted = action.payload.sort((a, b) => { return a.priority - b.priority; })
             return sorted;
-        }
+        },
+        [createBugs.fulfilled]: (state, action) => {
+            return [...state, action.payload];
+        },
     }
 });
 
 export default slice.reducer;
 
-export const { createBugs, deleteBugs, updateBugs, markComplete } = slice.actions;
+export const { deleteBugs, updateBugs, markComplete } = slice.actions;

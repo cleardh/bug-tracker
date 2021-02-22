@@ -7,7 +7,10 @@ const schema = mongoose.Schema({
     version: String,
     priority: Number,
     assigned: String,
-    creator: String,
+    creator: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     time: String,
     completed: Boolean
 });
