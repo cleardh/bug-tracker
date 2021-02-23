@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import BugModel from '../../../Models/BugModel';
 import { createBugs } from '../../../Controllers/Redux/bugSlice';
 
@@ -7,6 +8,7 @@ import './bugForm.css';
 
 export default (props) => {
     const dispatch = useDispatch();
+    const history = useHistory();
     const [bugObject, setBugObject] = useState(new BugModel(props.bug));
 
     const inputChanged = (e) => {
@@ -27,6 +29,7 @@ export default (props) => {
             assigned: 'Dongha Kang',
             priority: 1
         });
+        history.push('/');
     }
 
     return (
