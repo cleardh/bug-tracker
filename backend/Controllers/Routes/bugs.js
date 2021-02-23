@@ -34,7 +34,7 @@ route.put('/', verifyToken, (req, res) => {
     BugModel.findByIdAndUpdate(req.body._id, { ...req.body, time: new Date().toString().slice(4, 24) }, { new: true, useFindAndModify: false })
     .then(bug => {
         if (!bug) return res.status(400).send('No bug found');
-        res.send('Bug updated');
+        res.send(bug);
     })
     .catch(err => res.status(400).send(err));
 });

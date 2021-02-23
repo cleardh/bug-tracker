@@ -14,13 +14,21 @@ export const createBugs = createAsyncThunk(
     'bugs/createBugs',
     async (newBug) => {
         const res = await axios.post('/bugs', newBug, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: { 'Content-Type': 'application/json' }
         });
         return res.data;
     }
 );
+
+export const markComplete = createAsyncThunk(
+    'bugs/markComplete',
+    async (bug) => {
+        const res = await axios.put('/bugs', { ...bug, completed: true }, {
+            headers: { 'Content-Type': 'application/json'}
+        });
+        return res.data;
+    }
+)
 
 const slice = createSlice({
     name: 'bugs',
@@ -31,9 +39,6 @@ const slice = createSlice({
         },
         updateBugs: (state, action) => {
             return state.map(bug => bug._id === action.payload._id ? { ...bug, ...action.payload } : bug);
-        },
-        markComplete: (state, action) => {
-            return state.map(bug => bug._id === action.payload ? { ...bug, completed: true } : bug);
         }
     },
     extraReducers: {
@@ -44,9 +49,12 @@ const slice = createSlice({
         [createBugs.fulfilled]: (state, action) => {
             return [...state, action.payload];
         },
+        [markComplete.fulfilled]: (state, action) => {
+            return state.map(bug => bug._id === action.payload._id ? { ...bug, completed: true } : bug);
+        }
     }
 });
 
 export default slice.reducer;
 
-export const { deleteBugs, updateBugs, markComplete } = slice.actions;
+export const { deleteBugs, updateBugs } = slice.actions;
