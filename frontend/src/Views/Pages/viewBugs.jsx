@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from 'react-router-dom'
 import { getBugs } from "../../Controllers/Redux/bugSlice";
 import BugCard from '../Components/BugCard/bugCard';
 import BugView from '../Components/BugView/bugView';
 
-export default () => {
+export default (props) => {
+    const location = useLocation();
     const [displayBug, setDisplayBug] = useState({
         name: '',
         isDisplayed: false
@@ -26,7 +28,7 @@ export default () => {
     return (
         <div className='page-container'>
             {bugs.map((bug, key) => (
-                <BugCard key={key} bug={bug} clicked={bugClicked} />
+                location.state && bug.priority === location.state.priority && <BugCard key={key} bug={bug} clicked={bugClicked} />
             ))}
             {displayBug.isDisplayed && <BugView bug={bugs.filter(bug => bug.name === displayBug.name)[0]} clicked={bugClicked} />}
         </div>

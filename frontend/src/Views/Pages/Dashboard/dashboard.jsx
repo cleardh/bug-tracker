@@ -26,15 +26,18 @@ export default () => {
         dispatch(getBugs());
     }, [bugs === undefined]);
 
-    const redirect = () => {
-        history.push('/viewbugs');
+    const redirect = (priority) => {
+        history.push({
+            pathname: '/viewbugs',
+            state: { priority }
+        });
     }
 
     return (
         <div className='page-container'>
-            <Card priority='1' count={highCount.length} clicked={redirect} />
-            <Card priority='2' count={midCount.length} clicked={redirect} />
-            <Card priority='3' count={lowCount.length} clicked={redirect} />
+            <Card priority='1' count={highCount.length} clicked={() => redirect(1)} />
+            <Card priority='2' count={midCount.length} clicked={() => redirect(2)} />
+            <Card priority='3' count={lowCount.length} clicked={() => redirect(3)} />
         </div>
     )
 }
