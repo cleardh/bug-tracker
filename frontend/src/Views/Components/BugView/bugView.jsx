@@ -39,7 +39,7 @@ export default (props) => {
                 <ViewSection title="Creator" info={bug.creator} />
                 <ViewSection title="App Version" info={bug.version} />
                 <ViewSection title="Time Created" info={bug.time} />
-                <button onClick={() => dispatch(markComplete(props.bug._id))}>
+                <button disabled={props.bug.completed} style={{ background: props.bug.completed && 'gray' }} onClick={() => dispatch(markComplete(props.bug))}>
                     Mark Complete
                 </button>
             </div>
