@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import BugModel from '../../../Models/BugModel';
-import { createBugs } from '../../../Controllers/Redux/bugSlice';
+import { createBugs, updateBugs } from '../../../Controllers/Redux/bugSlice';
 
 import './bugForm.css';
 
@@ -20,7 +20,7 @@ export default (props) => {
 
     const submitForm = (e) => {
         e.preventDefault();
-        dispatch(createBugs(bugObject));
+        props.title === 'Edit bug' ? dispatch(updateBugs(bugObject)) : dispatch(createBugs(bugObject));
         setBugObject({
             name: '',
             details: '',

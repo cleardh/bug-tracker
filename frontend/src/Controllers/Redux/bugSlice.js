@@ -28,7 +28,27 @@ export const markComplete = createAsyncThunk(
         });
         return res.data;
     }
-)
+);
+
+export const markPending = createAsyncThunk(
+    'bugs/markPending',
+    async (bug) => {
+        const res = await axios.put('/bugs', { ...bug, completed: false }, {
+            headers: { 'Content-Type': 'application/json'}
+        });
+        return res.data;
+    }
+);
+
+export const updateBugs = createAsyncThunk(
+    'bugs/updateBugs',
+    async (bug) => {
+        const res = await axios.put('/bugs', bug, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+        return res.data;
+    }
+);
 
 const slice = createSlice({
     name: 'bugs',
@@ -50,11 +70,17 @@ const slice = createSlice({
             return [...state, action.payload];
         },
         [markComplete.fulfilled]: (state, action) => {
-            return state.map(bug => bug._id === action.payload._id ? { ...bug, completed: true } : bug);
+            return state.map(bug => bug._id === action.payload._id ? action.payload : bug);
+        },
+        [markPending.fulfilled]: (state, action) => {
+            return state.map(bug => bug._id === action.payload._id ? action.payload : bug);
+        },
+        [updateBugs.fulfilled]: (state, action) => {
+            return state.map(bug => bug._id === action.payload._id ? action.payload : bug);
         }
     }
 });
 
 export default slice.reducer;
 
-export const { deleteBugs, updateBugs } = slice.actions;
+export const { deleteBugs } = slice.actions;
