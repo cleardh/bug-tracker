@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ViewSection from './Components/bugViewSection';
 import BugModel from '../../../Models/BugModel';
 import { useDispatch } from 'react-redux';
-import { deleteBugs, markComplete } from '../../../Controllers/Redux/bugSlice';
+import { deleteBugs, markComplete, markPending } from '../../../Controllers/Redux/bugSlice';
 import EditPanel from '../EditDelete/editPanel';
 import EditForm from '../BugCreateEdit/bugForm';
 
@@ -39,8 +39,8 @@ export default (props) => {
                 <ViewSection title="Creator" info={bug.creator} />
                 <ViewSection title="App Version" info={bug.version} />
                 <ViewSection title="Time Created" info={bug.time} />
-                <button disabled={props.bug.completed} style={{ background: props.bug.completed && 'gray' }} onClick={() => dispatch(markComplete(props.bug))}>
-                    Mark Complete
+                <button style={{ background: props.bug.completed && 'gray' }} onClick={() => props.bug.completed ? dispatch(markPending(props.bug)) : dispatch(markComplete(props.bug))}>
+                    {props.bug.completed ? 'Mark Pending' : 'Mark Complete'}
                 </button>
             </div>
             {disPlayEdit && (
