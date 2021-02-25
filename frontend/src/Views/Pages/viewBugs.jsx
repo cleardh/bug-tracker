@@ -24,7 +24,7 @@ export default (props) => {
             isDisplayed: !displayBug.isDisplayed
         })
     }
-
+    
     return (
         <div className='page-container'>
             {bugs.map((bug, key) => (

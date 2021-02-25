@@ -15,7 +15,7 @@ route.post('/', verifyToken, async (req, res) => {
 
 // Get all bugs
 route.get('/', verifyToken, (req, res) => {
-    BugModel.find().then(bugs => {
+    BugModel.find().populate('creator', ['username']).then(bugs => {
         if (!bugs) return res.status(400).send('No bugs');
         res.send(bugs);
     }).catch(err => res.status(400).send(err));
@@ -23,7 +23,7 @@ route.get('/', verifyToken, (req, res) => {
 
 // Get bug by id
 route.get('/:id', verifyToken, (req, res) => {
-    BugModel.findById(req.params.id).then(bug => {
+    BugModel.findById(req.params.id).populate('creator', ['username']).then(bug => {
         if (!bug) return res.status(400).send('No bug found');
         res.send(bug);
     }).catch(err => res.status(400).send(err));
@@ -31,9 +31,12 @@ route.get('/:id', verifyToken, (req, res) => {
 
 // Update bug by id
 route.put('/', verifyToken, (req, res) => {
-    BugModel.findByIdAndUpdate(req.body._id, { ...req.body, time: new Date().toString().slice(4, 24) }, { new: true, useFindAndModify: false })
+    const creator = req.user._doc;
+    BugModel.findByIdAndUpdate(req.body._id, { ...req.body, creator, time: new Date().toString().slice(4, 24) }, { new: true, useFindAndModify: false })
+    .populate('creator', ['username'])
     .then(bug => {
         if (!bug) return res.status(400).send('No bug found');
+        console.log(bug);
         res.send(bug);
     })
     .catch(err => res.status(400).send(err));
@@ -43,7 +46,7 @@ route.put('/', verifyToken, (req, res) => {
 route.delete('/:id', verifyToken, (req, res) => {
     BugModel.findByIdAndDelete(req.params.id).then(bug => {
         if (!bug) return res.status(400).send('No bug found');
-        res.send('Bug deleted');
+        res.send(bug);
     }).catch(err => res.status(400).send(err));
 });
 
