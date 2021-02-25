@@ -57,9 +57,6 @@ const slice = createSlice({
         deleteBugs: (state, action) => {
             return state.filter(bug => bug._id !== action.payload);
         },
-        updateBugs: (state, action) => {
-            return state.map(bug => bug._id === action.payload._id ? { ...bug, ...action.payload } : bug);
-        }
     },
     extraReducers: {
         [getBugs.fulfilled]: (state, action) => {
@@ -70,13 +67,13 @@ const slice = createSlice({
             return [...state, action.payload];
         },
         [markComplete.fulfilled]: (state, action) => {
-            return state.map(bug => bug._id === action.payload._id ? action.payload : bug);
+            return state.map(bug => bug._id === action.payload._id ? { ...bug, ...action.payload } : bug);
         },
         [markPending.fulfilled]: (state, action) => {
-            return state.map(bug => bug._id === action.payload._id ? action.payload : bug);
+            return state.map(bug => bug._id === action.payload._id ? { ...bug, ...action.payload } : bug);
         },
         [updateBugs.fulfilled]: (state, action) => {
-            return state.map(bug => bug._id === action.payload._id ? action.payload : bug);
+            return state.map(bug => bug._id === action.payload._id ? { ...bug, ...action.payload } : bug);
         }
     }
 });
