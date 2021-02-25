@@ -9,17 +9,19 @@ import './bugForm.css';
 export default (props) => {
     const dispatch = useDispatch();
     const history = useHistory();
-    const [bugObject, setBugObject] = useState(new BugModel(props.bug));
-
+    const defaultValue = props.title === 'Edit bug' ? new BugModel(props.bug) : new BugModel({ ...props.bug, priority: 1 });
+    const [bugObject, setBugObject] = useState(defaultValue);
+    
     const inputChanged = (e) => {
         setBugObject({
             ...bugObject,
             [e.target.name]: e.target.value
-        })
+        });
     }
 
     const submitForm = (e) => {
         e.preventDefault();
+        
         props.title === 'Edit bug' ? dispatch(updateBugs(bugObject)) : dispatch(createBugs(bugObject));
         setBugObject({
             name: '',
@@ -29,7 +31,7 @@ export default (props) => {
             assigned: 'Dongha Kang',
             priority: 1
         });
-        history.push('/');
+        props.title === 'Edit bug' ? props.close() : history.push('/');
     }
 
     return (
@@ -44,7 +46,7 @@ export default (props) => {
                 <label>Steps: </label>
                 <textarea name='steps' placeholder='Steps to recreate the bug' required onChange={inputChanged} value={bugObject.steps}></textarea>
                 <label>Priority: </label>
-                <select name='priority' required onChange={inputChanged} value={bugObject.priority || 1}>
+                <select name='priority' required onChange={inputChanged} value={bugObject.priority}>
                     <option value='1'>High</option>
                     <option value='2'>Medium</option>
                     <option value='3'>Low</option>

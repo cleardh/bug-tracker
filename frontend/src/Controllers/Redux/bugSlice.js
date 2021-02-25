@@ -50,14 +50,18 @@ export const updateBugs = createAsyncThunk(
     }
 );
 
+export const deleteBugs = createAsyncThunk(
+    'bugs/deleteBugs',
+    async (id) => {
+        const res = await axios.delete(`/bugs/${id}`);
+        return res.data;
+    }
+);
+
 const slice = createSlice({
     name: 'bugs',
     initialState: [],
-    reducers: {
-        deleteBugs: (state, action) => {
-            return state.filter(bug => bug._id !== action.payload);
-        },
-    },
+    reducers: {},
     extraReducers: {
         [getBugs.fulfilled]: (state, action) => {
             const sorted = action.payload.sort((a, b) => { return a.priority - b.priority; })
@@ -67,17 +71,18 @@ const slice = createSlice({
             return [...state, action.payload];
         },
         [markComplete.fulfilled]: (state, action) => {
-            return state.map(bug => bug._id === action.payload._id ? { ...bug, ...action.payload } : bug);
+            return state.map(bug => bug._id === action.payload._id ? action.payload : bug);
         },
         [markPending.fulfilled]: (state, action) => {
-            return state.map(bug => bug._id === action.payload._id ? { ...bug, ...action.payload } : bug);
+            return state.map(bug => bug._id === action.payload._id ? action.payload : bug);
         },
         [updateBugs.fulfilled]: (state, action) => {
-            return state.map(bug => bug._id === action.payload._id ? { ...bug, ...action.payload } : bug);
+            return state.map(bug => bug._id === action.payload._id ? action.payload : bug);
+        },
+        [deleteBugs.fulfilled]: (state, action) => {
+            return state.filter(bug => bug._id !== action.payload._id);
         }
     }
 });
 
 export default slice.reducer;
-
-export const { deleteBugs } = slice.actions;

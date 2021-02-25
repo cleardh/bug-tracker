@@ -24,27 +24,27 @@ export default (props) => {
 
     return (
         <>
-            <div className="bug-view">
+            <div className='bug-view'>
                 <EditPanel
                     editClicked={editClicked}
                     deleteClicked={deleteClicked}
                 />
-                <button className="close-btn" onClick={props.clicked}>
+                <button className='close-btn' onClick={props.clicked}>
                     Close
                 </button>
                 <h1>{bug.name}</h1>
-                <ViewSection title="Details" info={bug.details} />
-                <ViewSection title="Steps" info={bug.steps} />
-                <ViewSection title="Priority" info={bug.priority} />
-                <ViewSection title="Creator" info={bug.creator} />
-                <ViewSection title="App Version" info={bug.version} />
-                <ViewSection title="Time Created" info={bug.time} />
+                <ViewSection title='Details' info={bug.details} />
+                <ViewSection title='Steps' info={bug.steps} />
+                <ViewSection title='Priority' info={bug.priority} />
+                <ViewSection title='Creator' info={bug.creator.username} />
+                <ViewSection title='App Version' info={bug.version} />
+                <ViewSection title='Time Created' info={bug.time} />
                 <button style={{ background: props.bug.completed && 'gray' }} onClick={() => props.bug.completed ? dispatch(markPending(props.bug)) : dispatch(markComplete(props.bug))}>
                     {props.bug.completed ? 'Mark Pending' : 'Mark Complete'}
                 </button>
             </div>
             {disPlayEdit && (
-                <EditForm title="Edit bug" bug={bug} close={editClicked} />
+                <EditForm title='Edit bug' bug={bug} close={editClicked} />
             )}
         </>
     );
