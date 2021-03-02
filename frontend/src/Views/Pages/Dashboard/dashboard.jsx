@@ -33,6 +33,8 @@ export default () => {
         });
     }
 
+    Card.displayName = 'Card';
+
     return (
         <div className='page-container'>
             <Card priority='1' count={highCount.length} clicked={() => redirect(1)} />
